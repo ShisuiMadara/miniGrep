@@ -1,23 +1,23 @@
 use std::env;
-use std::fs;
-
-struct Config{
-    target_string: String,
-    file_path: String
-}
+use std::process;
+use minigrep::Config;
+use minigrep::run;
 
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     
-    let config = parse_config(&args);
+    let config = Config::parse_config(&args).unwrap_or_else(|err|{
+        println!("Encountered error parsing {err}");
+        process::exit(1);
+    });
+
+    if let Err(e) = run(config){
+        println!("{}",e);
+        process::exit(1);
+    }
     
 }
 
-fn parse_config(args: &[String]) -> Config{
 
-    let target_string = args[1].clone();
-    let file_path = args[2].clone();
 
-    Config {target_string, file_path}
-}

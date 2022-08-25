@@ -36,12 +36,14 @@ pub fn run (config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(target_string:&'a str, text: &'a str) -> Vec<&'a str>{
+pub fn search<'a>(target_string:&str, text: &'a str) -> Vec<&'a str>{
     
     let mut results = Vec::new();
 
+    let target_string = target_string.to_lowercase();
+
     for line in text.lines(){
-        if line.contains(target_string){
+        if line.to_lowercase().contains(&target_string){
             results.push(line);
         }
     }
@@ -62,4 +64,16 @@ mod tests{
 
         assert_eq!(vec!["safe, fast, productive."], search(query, contents));
     }
+    #[test]
+    fn test2(){
+        let query = "rUsT";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three. 
+Trust me.";
+
+        assert_eq!(vec!["Rust:", "Trust me."], search(query, contents));
+    }
+
 }

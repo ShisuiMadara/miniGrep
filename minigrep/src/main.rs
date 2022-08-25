@@ -8,12 +8,12 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     
     let config = Config::parse_config(&args).unwrap_or_else(|err|{
-        println!("Encountered error parsing {err}");
+        eprintln!("Encountered error parsing {err}");
         process::exit(1);
     });
 
     if let Err(e) = run(config){
-        println!("{}",e);
+        eprintln!("{}",e);
         process::exit(1);
     }
     

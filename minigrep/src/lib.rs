@@ -7,17 +7,6 @@ pub struct Config{
     file_path: String
 }
 
-
-pub fn run (config: Config) -> Result<(), Box<dyn Error>> {
-
-    let contents = fs::read_to_string(config.file_path)?;
-        
-    println!("{contents}");
-
-    Ok(())
-}
-
-
 impl Config{
 
     pub fn parse_config(args: &[String]) -> Result<Config,&str>{
@@ -32,4 +21,45 @@ impl Config{
         Ok(Config {target_string, file_path})
     }
 
+}
+
+pub fn run (config: Config) -> Result<(), Box<dyn Error>> {
+
+    let contents = fs::read_to_string(config.file_path)?;
+
+    for line in search(&config.target_string, &contents){
+        println!("{line}");
+    }
+        
+    //println!("{contents}");
+
+    Ok(())
+}
+
+pub fn search<'a>(target_string:&'a str, text: &'a str) -> Vec<&'a str>{
+    
+    let mut results = Vec::new();
+
+    for line in text.lines(){
+        if line.contains(target_string){
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+#[cfg(test)]
+mod tests{
+    
+    use super::*;
+
+    #[test]
+    fn test1(){
+        let query = "duct";
+        let contents = "safe, fast, productive.
+        Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
 }
